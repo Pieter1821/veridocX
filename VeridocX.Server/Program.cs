@@ -39,6 +39,8 @@ api.MapGet("ping", () => new PingResponse("veridocx-api", "ok", DateTimeOffset.U
 
 api.MapSaIdEndpoints();
 
+api.MapAffordabilityEndpoints();
+
 app.MapDefaultEndpoints();
 
 app.UseFileServer();

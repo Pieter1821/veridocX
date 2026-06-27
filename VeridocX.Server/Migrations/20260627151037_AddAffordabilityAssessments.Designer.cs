@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VeridocX.Server.Data;
@@ -11,9 +12,11 @@ using VeridocX.Server.Data;
 namespace VeridocX.Server.Migrations
 {
     [DbContext(typeof(VeridocXDbContext))]
-    partial class VeridocXDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260627151037_AddAffordabilityAssessments")]
+    partial class AddAffordabilityAssessments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

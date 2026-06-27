@@ -1,11 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using VeridocX.Server.Domain;
+using VeridocX.Server.Domain.Affordability;
 
 namespace VeridocX.Server.Data;
 
 public class VeridocXDbContext(DbContextOptions<VeridocXDbContext> options) : DbContext(options)
 {
     public DbSet<AnalysisJob> Jobs => Set<AnalysisJob>();
+
+    public DbSet<AffordabilityAssessment> AffordabilityAssessments => Set<AffordabilityAssessment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,5 +29,20 @@ public class VeridocXDbContext(DbContextOptions<VeridocXDbContext> options) : Db
         job.Property(j => j.ResultJson).HasColumnType("jsonb");
 
         job.HasIndex(j => new { j.Status, j.CreatedAt });
+
+        var afford = modelBuilder.Entity<AffordabilityAssessment>();
+
+        afford.HasKey(a => a.Id);
+
+        afford.Property(a => a.SubjectFingerprint).HasMaxLength(64);
+        afford.HasIndex(a => a.SubjectFingerprint);
+
+        afford.Property(a => a.GrossMonthlyIncome).HasPrecision(18, 2);
+        afford.Property(a => a.DiscretionaryIncome).HasPrecision(18, 2);
+        afford.Property(a => a.ProposedInstalment).HasPrecision(18, 2);
+
+        afford.Property(a => a.ResultJson).HasColumnType("jsonb");
+
+        afford.HasIndex(a => a.CreatedAt);
     }
 }
