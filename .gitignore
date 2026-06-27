@@ -1,0 +1,43 @@
+# ─────────────────────────────────────────────────────────────
+# VeridocX .gitignore
+# Goal: commit source only. Never commit build output, secrets,
+# dependencies, or local planning docs.
+# ─────────────────────────────────────────────────────────────
+
+# --- Local planning docs (kept on disk, never pushed) ---
+docs/
+*.md
+
+# --- .NET build output ---
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+*.user
+*.suo
+.vs/
+
+# --- Secrets / local config (SECURITY: never commit) ---
+# user-secrets live outside the repo by design, but block these too:
+*.env
+.env
+.env.*
+appsettings.*.local.json
+appsettings.Local.json
+*.pfx
+*.key
+
+# --- Node / Vite (frontend) ---
+node_modules/
+frontend/dist/
+frontend/build/
+*.log
+npm-debug.log*
+
+# --- Aspire / tooling local state ---
+.aspire/
+**/wwwroot/   # built SPA is generated at publish time, not source
+
+# --- OS noise ---
+.DS_Store
+Thumbs.db
