@@ -1,5 +1,3 @@
-using Azure;
-using Azure.AI.DocumentIntelligence;
 using VeridocX.Server.Domain.SaId;
 
 namespace VeridocX.Server.Services;
@@ -11,16 +9,13 @@ public interface IIdDocumentExtractor
     Task<IdExtractionResult> ExtractAsync(BinaryData image, CancellationToken ct);
 }
 
-public sealed class IdDocumentExtractor(DocumentIntelligenceClient client) : IIdDocumentExtractor
+public sealed class IdDocumentExtractor(IOcrService ocr) : IIdDocumentExtractor
 {
     public async Task<IdExtractionResult> ExtractAsync(BinaryData image, CancellationToken ct)
     {
-        Operation<AnalyzeResult> operation =
-            await client.AnalyzeDocumentAsync(WaitUntil.Completed, "prebuilt-read", image, ct);
+        var doc = await ocr.ReadAsync(image, ct);
 
-        var text = operation.Value.Content ?? string.Empty;
-
-        var candidates = SaIdTextScanner.FindCandidates(text);
+        var candidates = SaIdTextScanner.FindCandidates(doc.Text);
         var best = candidates.FirstOrDefault(c => SaIdValidator.Validate(c).IsValid)
                    ?? candidates.FirstOrDefault();
 

@@ -36,7 +36,9 @@ builder.Services.AddSingleton(sp =>
     return new DocumentIntelligenceClient(new Uri(endpoint), new AzureKeyCredential(key));
 });
 
+builder.Services.AddSingleton<IOcrService, DocumentIntelligenceOcrService>();
 builder.Services.AddScoped<IIdDocumentExtractor, IdDocumentExtractor>();
+builder.Services.AddScoped<IPayslipExtractor, PayslipExtractor>();
 
 builder.Services.AddOpenApi();
 
@@ -56,6 +58,8 @@ api.MapGet("ping", () => new PingResponse("veridocx-api", "ok", DateTimeOffset.U
     .WithName("Ping");
 
 api.MapSaIdEndpoints();
+
+api.MapPayslipEndpoints();
 
 api.MapAffordabilityEndpoints();
 
