@@ -1,31 +1,43 @@
+using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
+using VeridocX.Server.Data;
+using VeridocX.Server.Endpoints;
+using VeridocX.Server.Security;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add service defaults & Aspire client integrations.
 builder.AddServiceDefaults();
 
-// Add services to the container.
+builder.AddNpgsqlDbContext<VeridocXDbContext>(
+    connectionName: "Supabase",
+    configureDbContextOptions: options => options.UseSnakeCaseNamingConvention());
+
 builder.Services.AddProblemDetails();
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.ConfigureHttpJsonOptions(options =>
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+builder.Services.AddSingleton<IIdFingerprinter, HmacIdFingerprinter>();
+
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
-
 
 var api = app.MapGroup("/api");
 
-// Temporary connectivity probe so the React console can prove it reaches the API.
-// Phase 0.5 replaces this with the real document upload + status endpoints.
 api.MapGet("ping", () => new PingResponse("veridocx-api", "ok", DateTimeOffset.UtcNow))
     .WithName("Ping");
+
+api.MapSaIdEndpoints();
 
 app.MapDefaultEndpoints();
 
